@@ -1,0 +1,149 @@
+CREATE PROCEDURE insert_days (p_station INT, p_year INT, p_month INT)
+LANGUAGE SQL
+BEGIN
+
+/* End flag */
+DECLARE is_end INT DEFAULT 0;
+
+/* Buffer Variables */
+DECLARE buf_level FLOAT ( 24 );
+DECLARE buf_station INT ( 12 );
+DECLARE buf_year INT ( 12 );
+DECLARE buf_month INT ( 12 );
+DECLARE buf_day INT ( 12 );
+
+/* Cursor Definition */
+DECLARE days_ins CURSOR FOR 
+select id_station, s_year, s_month, s_day, avg(s_level) as a_level 
+from H_DATA where id_station=p_station AND s_year=p_year AND s_month=p_month
+GROUP BY s_day ORDER BY s_day;
+
+/* Error condition */
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET is_end = 1;
+
+/* Procedure*/
+OPEN days_ins;
+
+wet : LOOP
+FETCH days_ins INTO buf_station, buf_year, buf_month, buf_day, buf_level;
+IF is_end THEN LEAVE wet;
+END IF;
+INSERT INTO HD_DATA
+  (id_station, s_year, s_month, s_day, s_level)
+VALUES (p_station, p_year, p_month, buf_day, buf_level);
+END LOOP wet;
+CLOSE days_ins;
+
+END
+
+----
+
+CREATE PROCEDURE insert_months (p_station INT, p_year INT)
+LANGUAGE SQL
+BEGIN
+
+/* End flag */
+DECLARE is_end INT DEFAULT 0;
+
+/* Buffer Variables */
+DECLARE buf_level FLOAT ( 24 );
+DECLARE buf_station INT ( 12 );
+DECLARE buf_year INT ( 12 );
+DECLARE buf_month INT ( 12 );
+
+
+/* Cursor Definition */
+DECLARE months_ins CURSOR FOR 
+select id_station, s_year, s_month, avg(s_level) as a_level 
+from HD_DATA where id_station=p_station AND s_year=p_year
+GROUP BY s_month ORDER BY s_month;
+
+/* Error condition */
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET is_end = 1;
+
+/* Procedure*/
+OPEN months_ins;
+
+wet : LOOP
+FETCH months_ins INTO buf_station, buf_year, buf_month, buf_level;
+IF is_end THEN LEAVE wet;
+END IF;
+INSERT INTO HM_DATA
+  (id_station, s_year, s_month, s_level)
+VALUES (p_station, p_year, buf_month, buf_level);
+END LOOP wet;
+CLOSE months_ins;
+
+END
+
+
+
+----
+
+
+
+CREATE PROCEDURE insert_years (p_station INT)
+LANGUAGE SQL
+BEGIN
+
+/* End flag */
+DECLARE is_end INT DEFAULT 0;
+
+/* Buffer Variables */
+DECLARE buf_level FLOAT ( 24 );
+DECLARE buf_station INT ( 12 );
+DECLARE buf_year INT ( 12 );
+
+
+/* Cursor Definition */
+DECLARE years_ins CURSOR FOR 
+select id_station, s_year, avg(s_level) as a_level 
+from HD_DATA where id_station=p_station
+GROUP BY s_year ORDER BY s_year;
+
+/* Error condition */
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET is_end = 1;
+
+/* Procedure*/
+OPEN years_ins;
+
+wet : LOOP
+FETCH years_ins INTO buf_station, buf_year, buf_level;
+IF is_end THEN LEAVE wet;
+END IF;
+INSERT INTO HY_DATA
+  (id_station, s_year, s_level)
+VALUES (p_station, buf_year, buf_level);
+END LOOP wet;
+CLOSE years_ins;
+
+END
+
+
+
+
+----
+
+CREATE TABLE H_DATA (
+id_station INT ( 32 ),
+s_year INT ( 32 ),
+s_month INT ( 32 ),
+s_day INT ( 32 ),
+s_hour INT ( 32 ),
+s_minute INT ( 32 ),
+s_level FLOAT ( 32 ),
+PRIMARY KEY ( id_station, s_year, s_month, s_day, s_hour, s_minute )
+);
+
+---
+
+select id_station, s_year, s_month, s_day, s_level as a_level from HD_DATA
+---
+
+CREATE TABLE DN_EDGES (
+DN_id INT ( 32 ),
+e_type INT ( 32 ),
+e_num INT ( 32 ),
+e_value FLOAT ( 32 ),
+PRIMARY KEY (DN_id, e_type, e_num )
+);

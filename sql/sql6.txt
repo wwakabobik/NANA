@@ -1,0 +1,175 @@
+// DAY
+select id_station, s_year, s_month, s_day, s_level as a_level from HD_DATA where id_station=1 AND s_year=1955 AND s_month=11-1 AND s_day>30-10
+UNION
+select id_station, s_year, s_month, s_day, s_level as a_level from HD_DATA where id_station=1 AND s_year=1955 AND s_month=11 AND s_day<10
+// MONTH
+select id_station, s_year, s_month, s_level as a_level from HM_DATA where id_station=1 AND s_year=1955-1 AND s_month>12-4
+UNION
+select id_station, s_year, s_month, s_level as a_level from HM_DATA where id_station=1 AND s_year=1955 AND s_month<4
+// HOUR
+select id_station, s_year, s_month, s_day, s_hour, avg(s_level) as a_level from H_DATA where id_station=1 AND s_year=1955 AND s_month=11 AND s_day=12-1 AND s_hour>24-12 GROUP BY id_station, s_year, s_month, s_day, s_hour
+UNION
+select id_station, s_year, s_month, s_day, s_hour, avg(s_level) as a_level from H_DATA where id_station=1 AND s_year=1955 AND s_month=11 AND s_day=12 AND
+s_hour<12 GROUP BY id_station, s_year, s_month, s_day, s_hour
+
+
+// YEARS
+        if (CheckBox1->Checked)
+        {
+//        DHC->ConvertYears(ry,rm,in_p,rs);
+//        ADQuery1->SQL->Text=AnsiString(DHC->MQuery);
+        ADQuery1->Open();
+        int i=0;
+        while (!ADQuery1->Eof)
+                {
+                i++;
+                inp2[i]=ADQuery1->FieldByName("a_level")->AsFloat;
+                ADQuery1->Next();
+                }
+        ADQuery1->Close();
+        DHC->ConvertMonths(ry,rm,in_p+out_p,rs);
+        ADQuery1->SQL->Text=AnsiString(DHC->MQuery);
+        ADQuery1->Open();
+        i=0;
+        while (!ADQuery1->Eof)
+                {
+                i++;
+                inp[i]=ADQuery1->FieldByName("a_level")->AsFloat;
+                ADQuery1->Next();
+                }
+        ADQuery1->Close();
+        canonic_output_real=CompressOutput(inp,(out_p+in_p),5,1);
+        for (int j=0;j<out_p;j++)
+                outp[j]=canonic_output_real[j+in_p];
+        //DN->Learn(inp,outp);
+        DND->Learn(inp2,outp);
+        //DN->Calculate(inp2);
+        outp2=DND->Display();
+        yvalue=outp2[1];
+        }
+// MONTHS
+        if (CheckBox2->Checked)
+        {
+        DHC->ConvertMonths(ry,rm,in_p,rs);
+        ADQuery1->SQL->Text=AnsiString(DHC->MQuery);
+        ADQuery1->Open();
+        int i=0;
+        while (!ADQuery1->Eof)
+                {
+                i++;
+                inp2[i]=ADQuery1->FieldByName("a_level")->AsFloat;
+                ADQuery1->Next();
+                }
+        ADQuery1->Close();
+        DHC->ConvertMonths(ry,rm,in_p+out_p,rs);
+        ADQuery1->SQL->Text=AnsiString(DHC->MQuery);
+        ADQuery1->Open();
+        i=0;
+        while (!ADQuery1->Eof)
+                {
+                i++;
+                inp[i]=ADQuery1->FieldByName("a_level")->AsFloat;
+                ADQuery1->Next();
+                }
+        ADQuery1->Close();
+        if (CheckBox1->Checked)
+                inp2[0]=yvalue;
+        canonic_output_real=CompressOutput(inp,(out_p+in_p),5,1);
+        for (int j=0;j<out_p;j++)
+                outp[j]=canonic_output_real[j+in_p];
+        //DN->Learn(inp,outp);
+        DND->Learn(inp2,outp);
+        //DN->Calculate(inp2);
+        outp2=DND->Display();
+        mvalue=outp2[1];
+        }
+// DAYS
+        if (CheckBox3->Checked)
+        {
+        DHC->ConvertDays(ry,rm,rd,in_p,rs);
+        ADQuery1->SQL->Text=AnsiString(DHC->DQuery);
+        ADQuery1->Open();
+        int i=0;
+        while (!ADQuery1->Eof)
+                {
+                i++;
+                inp2[i]=ADQuery1->FieldByName("a_level")->AsFloat;
+                ADQuery1->Next();
+                }
+        ADQuery1->Close();
+        DHC->ConvertDays(ry,rm,rd,in_p+out_p,rs);
+        ADQuery1->SQL->Text=AnsiString(DHC->DQuery);
+        ADQuery1->Open();
+        i=0;
+        while (!ADQuery1->Eof)
+                {
+                i++;
+                inp[i]=ADQuery1->FieldByName("a_level")->AsFloat;
+                ADQuery1->Next();
+                }
+        ADQuery1->Close();
+        if (CheckBox2->Checked)
+                inp2[0]=mvalue;
+        canonic_output_real=CompressOutput(inp,(out_p+in_p),5,1);
+        for (int j=0;j<out_p;j++)
+                outp[j]=canonic_output_real[j+in_p];
+        //DN->Learn(inp,outp);
+        DND->Learn(inp2,outp);
+        //DN->Calculate(inp2);
+        outp2=DND->Display();
+        dvalue=outp2[1];
+        }
+// HOURS
+        if (CheckBox4->Checked)
+        {
+        DHC->ConvertHours(ry,rm,rd,rh,in_p,rs);
+        ADQuery1->SQL->Text=AnsiString(DHC->HQuery);
+        ADQuery1->Open();
+        int i=0;
+        while (!ADQuery1->Eof)
+                {
+                i++;
+                inp2[i]=ADQuery1->FieldByName("a_level")->AsFloat;
+                ADQuery1->Next();
+                }
+        ADQuery1->Close();
+        DHC->ConvertHours(ry,rm,rd,rh,in_p+out_p,rs);
+        ADQuery1->SQL->Text=AnsiString(DHC->HQuery);
+        ADQuery1->Open();
+        i=0;
+        while (!ADQuery1->Eof)
+                {
+                i++;
+                inp[i]=ADQuery1->FieldByName("a_level")->AsFloat;
+                ADQuery1->Next();
+                }
+        ADQuery1->Close();
+        if (CheckBox3->Checked)
+                inp2[0]=dvalue;
+        canonic_output_real=CompressOutput(inp,(out_p+in_p),5,1);
+        for (int j=0;j<out_p;j++)
+                outp[j]=canonic_output_real[j+in_p];
+        //DN->Learn(inp,outp);
+        DNH->Learn(inp2,outp);
+        //DN->Calculate(inp2);
+        outp2=DNH->Display();
+        }
+
+LoginForm->ShowModal();
+
+ Form4->ADConnection1->Connected=false;
+ Form4->ADConnection1->Params->BeginUpdate();
+ Form4->ADConnection1->Params->Clear();
+ Form4->ADConnection1->Params->Add("User_Name="+Edit1->Text);
+ Form4->ADConnection1->Params->Add("Password="+Edit2->Text);
+ Form4->ADConnection1->Params->Add("DriverID=MySQL");  //
+ Form4->ADConnection1->DriverName="MySQL";
+ Form4->ADConnection1->Params->EndUpdate();
+ try {
+ Form4->ADConnection1->Connected=true;
+ }
+ catch (...)
+ {
+ ShowMessage("Wrong login\\password combination!\nError: 3");
+ Application->Terminate();
+ }
